@@ -4,13 +4,17 @@
             <SideBar />
             <TopBar />
         </div>
-        <ListUsers :users="users" />
+        
+        <EmptyUsers v-if="users.length === 0" />
+        <ListUsers v-else :users="users" />
+        
     </div>
 </template>
 
 <script setup>
 import SideBar from '@/components/sidebar/SideBar.vue';
 import TopBar from '@/components/topbar/TopBar.vue';
+import EmptyUsers from '@/components/users/EmptyUsers.vue';
 import ListUsers from '@/components/users/ListUsers.vue';
 import { onMounted, ref } from 'vue';
 
@@ -35,9 +39,9 @@ const getUsers = async () => {
     users.value = responseData.results;
 };
 
-onMounted(() => {
-    getUsers();
-});
+// onMounted(() => {
+//     getUsers();
+// });
 
 </script>
 
