@@ -1,13 +1,13 @@
 <template>
-    <div class="flex w-screen h-screen overflow-y-hidden">
+    <div class="flex w-screen h-screen overflow-x-hidden">
         <div class="flex flex-col">
             <SideBar />
             <TopBar />
         </div>
 
-        <div class="flex flex-wrap gap-4 justify-start w-full h-fit ml-28 mt-32">
+        <div class="flex flex-wrap gap-4 justify-start w-fit h-fit mx-28 mt-32">
             <DashboardCard @click="navigate('/config')" text="Configuração" iconName="config-icon" /> 
-            <DashboardCard text="Usuários" iconName="user-avatar-icon" /> 
+            <DashboardCard @click="navigate('/users')" text="Usuários" iconName="user-avatar-icon" /> 
             <DashboardCard text="Permissões" iconName="permissions-icon" /> 
             <DashboardCard text="Motivo de cancelamento" iconName="cancel-icon" /> 
             <DashboardCard text="Logs" iconName="logs-icon" /> 
@@ -22,7 +22,7 @@
 
 <script setup>
 import SideBar from '@/components/sidebar/SideBar.vue';
-import TopBar from '@/components/topbar/TopBar.vue';;
+import TopBar from '@/components/topbar/TopBar.vue';
 import DashboardCard from '@/components/dashboard/DashboardCard.vue';
 import { useRouter } from 'vue-router';
 
