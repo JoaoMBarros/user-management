@@ -45,7 +45,7 @@
         localStorage.setItem('user_data', JSON.stringify(data));
 
         // Redirect to the dashboard
-        router.push('/dashboard');
+        router.push('/');
       } else {
         // Error in the request
         console.error(data);

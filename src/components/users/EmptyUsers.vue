@@ -20,4 +20,5 @@
 <script setup>
 import addUserIcon from '@/assets/users/add-user-button-icon.svg';
 import emptyUserIcon from '@/assets/users/empty-users-icon.svg';
+import AddUserView from '@/views/AddUserView.vue';
 </script>

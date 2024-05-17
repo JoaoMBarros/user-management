@@ -35,7 +35,6 @@
                             <p class="text-sm">{{ user.endereco_residencial }}</p>
                             <p class="text-sm">{{ user.cidade }}</p>
                         </div>
-
                     </div>
                 </li>
             </ul>
