@@ -2,7 +2,7 @@
     <div class="list-container flex w-screen h-screen overflow-x-hidden bg-[#F5F6F7]" v-if="!isLoading">
         <div class="flex flex-col">
             <SideBar />
-            <TopBar />
+            <TopBar text="/Usuários"  />
         </div>
         <EmptyUsers v-if="users.length === 0" />
         <ListUsers v-else :users="users" />

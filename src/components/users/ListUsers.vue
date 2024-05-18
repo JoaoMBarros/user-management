@@ -1,19 +1,19 @@
 <template>
     <div class="flex w-full h-fit mx-20 mt-16 mb-8 flex-col">
+        <AddUserView v-if="showModal" @close-modal="toggleModal" :userId="user_id" />
             <div class="flex flex-row items-center mb-2 h-[50px]">
                 <div class="w-[419px] bg-white gap-2 flex items-center rounded-lg h-[35px]">  
                     <searchUserIcon />                  
                     <input type="text" class="w-full h-[35px] rounded-md" placeholder="Nome e CPF" />
                 </div>
-                <button class="flex ml-2">
+                <button class="flex ml-2 hover:scale-105" @click="toggleModal">
                     <addUserIcon />
                 </button>
             </div>
 
             <ul class="flex flex-col gap-4">
-                <li v-for="(user, index) in users" :key="index" class="rounded-lg shadow-lg bg-white hover:cursor-pointer hover:scale-105 overflow-hidden">
+                <li v-for="(user, index) in users" :key="index" class="rounded-lg shadow-lg bg-white hover:cursor-pointer hover:scale-105 overflow-hidden" @click="toggleModal(user)">
                     <div class="flex w-full mx-16 max-w-full items-center justify-between h-[85px]">
-                        
                         <!-- Nome e Cargo -->
                         <div class="flex-col items-start w-[120px]"> 
                             <p class="text-sm font-bold overflow-hidden whitespace-nowrap text-ellipsis">{{ user.nome }}</p>
@@ -44,10 +44,22 @@
 <script setup>
 import addUserIcon from '@/assets/users/add-user-button-icon.svg';
 import searchUserIcon from '@/assets/users/search-user-icon.svg';
-import { onMounted, ref } from 'vue';
+import AddUserView from '@/views/AddUserView.vue';
+import { ref, defineProps } from 'vue';
 
 const props = defineProps({
     users: Array,
 });
+
+const showModal = ref(false);
+
+const user_id = ref('')
+
+const toggleModal = (user) => {
+    if (user){
+        user_id.value = user.id
+    }
+    showModal.value = !showModal.value;
+};
 
 </script>
