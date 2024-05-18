@@ -115,7 +115,7 @@
                             <InputField label="Carteira de trabalho" class="w-[190px]" :value="numero_carteira_trabalho" @update:modelValue="numero_carteira_trabalho = $event" />
                             <InputField label="Série da carteira" class="w-[190px]" :value="serie_carteira_trabalho" @update:modelValue="serie_carteira_trabalho = $event" />
                             <InputField :required="data_emissao_carteira_trabalhoInvalid" label="Data da emissão da carteira" class="w-[190px]" :value="data_emissao_carteira_trabalho" @update:modelValue="data_emissao_carteira_trabalho = $event" />
-                            <DropDownMenu class="w-[155px]" label="UF da carteira" :selectedValue="uf_carteira_trabalho" @update:modelValue="uf_carteira_trabalho = $event">
+                            <DropDownMenu :required="uf_carteira_trabalhoInvalid" class="w-[155px]" label="UF da carteira" :selectedValue="uf_carteira_trabalho" @update:modelValue="uf_carteira_trabalho = $event">
                                 <option v-for="(status, index) in ufStates" :key="index">{{ status.label }}</option>
                             </DropDownMenu>
                         </div>
@@ -183,6 +183,11 @@ import '@vuepic/vue-datepicker/dist/main.css';
 import closeIcon from '@/assets/adduser/close-icon.svg';
 import emptyUserPhotoIcon from '@/assets/adduser/empty-user-photo-icon.svg';
 import calendarIcon from '@/assets/adduser/calendar-icon.svg';
+import { profiles } from '@/enums/profilesEnum.js';
+import { civilStatusOptions } from '@/enums/civilStatusEnum.js';
+import { ufStates } from '@/enums/ufStatesEnum.js';
+
+import { postUserService, fetchUserService, fetchNeighborhoodsService, fetchCitiesService } from '@/service/apiService.js';
 
 // If there's an userId, modal was opened by clicking in an user
 const props = defineProps({
@@ -197,57 +202,7 @@ const citiesLoaded = ref(false); // Variable to check if the cities were loaded
 const neighborhoodLoaded = ref(false); // Variable to check if the neighborhoods were loaded
 
 const cities = ref([]);
-
 const neighborhoods = ref([]);
-
-const civilStatusOptions = [
-    { value: 0, label: ''},
-    { value: 1, label: 'Casado(a)' },
-    { value: 2, label: 'Solteiro(a)' },
-    { value: 3, label: 'Divorciado(a)' },
-    { value: 4, label: 'Viuvo(a)' },
-    { value: 5, label: 'Separado(a)'}
-]
-
-const profiles = [
-    { value: 0, label: ''},
-    { value: 1, label: 'ADMIN' },
-    { value: 2, label: 'FINANCEIRO' },
-    { value: 3, label: 'GERENTE' },
-    { value: 4, label: 'SUPORTE' },
-    { value: 5, label: 'MARKETING' }
-]
-
-const ufStates = [
-    { value: 0, label: ''},
-  { value: 12, label: 'AC - Acre' },
-  { value: 27, label: 'AL - Alagoas' },
-  { value: 16, label: 'AP - Amapá' },
-  { value: 13, label: 'AM - Amazonas' },
-  { value: 29, label: 'BA - Bahia' },
-  { value: 23, label: 'CE - Ceará' },
-  { value: 53, label: 'DF - Distrito Federal' },
-  { value: 32, label: 'ES - Espírito Santo' },
-  { value: 52, label: 'GO - Goiás' },
-  { value: 21, label: 'MA - Maranhão' },
-  { value: 51, label: 'MT - Mato Grosso' },
-  { value: 50, label: 'MS - Mato Grosso do Sul' },
-  { value: 31, label: 'MG - Minas Gerais' },
-  { value: 15, label: 'PA - Pará' },
-  { value: 25, label: 'PB - Paraíba' },
-  { value: 41, label: 'PR - Paraná' },
-  { value: 26, label: 'PE - Pernambuco' },
-  { value: 22, label: 'PI - Piauí' },
-  { value: 33, label: 'RJ - Rio de Janeiro' },
-  { value: 24, label: 'RN - Rio Grande do Norte' },
-  { value: 43, label: 'RS - Rio Grande do Sul' },
-  { value: 11, label: 'RO - Rondônia' },
-  { value: 14, label: 'RR - Roraima' },
-  { value: 42, label: 'SC - Santa Catarina' },
-  { value: 35, label: 'SP - São Paulo' },
-  { value: 28, label: 'SE - Sergipe' },
-  { value: 17, label: 'TO - Tocantins' }
-];
 
 const nome = ref('');
 const cpf_cnpj = ref('');
@@ -290,7 +245,6 @@ const complemento = ref('');
 const telefone = ref('');
 const email = ref('');
 
-
 // Required fields according to the API
 const nomeInvalid = ref(false);
 const cpfInvalid = ref(false);
@@ -303,6 +257,7 @@ const logradouroInvalid = ref(false);
 const cepInvalid = ref(false);
 const data_emissao_carteira_trabalhoInvalid = ref(false);
 const uf_identidadeInvalid = ref(false);
+const uf_carteira_trabalhoInvalid = ref(false);
 const perfilInvalid = ref(false);
 const data_nascimentoInvalid = ref(false);
 const estado_civilInvalid = ref(false);
@@ -319,21 +274,12 @@ const closeModal = () => {
 
 // Function to load the cities from the API
 const loadCities = async () => {
-    const userData = localStorage.getItem('user_data');
-    if (!userData) throw new Error('No user data found');
-    const authToken = JSON.parse(userData).token;
 
-    const response = await fetch('https://api-manager-test.infog2.com.br.infog2.com.br/a/cidade/?text=', {
-        headers: {
-            Authorization: `Token ${authToken}`,
-        },
-    });
+    const responseData = await fetchCitiesService()
 
-    if (!response.ok) {
+    if (!responseData) {
           throw new Error(`HTTP error status: ${response.status}`);
     }
-
-    const responseData = await response.json();
 
     cities.value = responseData.map(item => ({
           value: item.id,
@@ -343,26 +289,106 @@ const loadCities = async () => {
 
 // Function to load the neighborhoods based on the selected city
 const loadNeighborhoods = async (cityId) => {
-    const userData = localStorage.getItem('user_data');
-    if (!userData) throw new Error('No user data found');
-    const authToken = JSON.parse(userData).token;
 
-    const response = await fetch(`https://api-manager-test.infog2.com.br.infog2.com.br/a/bairro/?cidade_id=${cityId}`, {
-        headers: {
-            Authorization: `Token ${authToken}`,
-        },
-    });
+    const responseData = await fetchNeighborhoodsService(cityId);
 
-    if (!response.ok) {
+    if (!responseData) {
           throw new Error(`HTTP error status: ${response.status}`);
     }
-
-    const responseData = await response.json();
 
     neighborhoods.value = responseData.map(item => ({
           value: item.id,
           label: item.nome
     }));
+}
+
+
+const postUser = async () => {
+    if(checkInvalidFields()) return;
+
+    const pessoa = mapUserToJson();
+    const response = await postUserService(pessoa);
+
+    if (!response) return;
+    
+    closeModal();
+
+};
+
+const fetchUser = async (userId) => {
+
+    try{
+        const responseData = await fetchUserService(userId);
+        await loadNeighborhoods(responseData.endereco_residencial.cidade)
+        mapJsonToUser(responseData)
+        userDataLoaded.value = true
+    } catch (error) {
+        alert('Erro ao carregar usuário')
+        closeModal()
+    }
+}
+
+// Checking if the modal was open by clicking in a user
+if (props.userId) {
+    userDataLoaded.value = false;
+    fetchUser(props.userId)
+}
+
+// Load the available cities when the modal is open
+onMounted( async () => {
+    await loadCities();
+    citiesLoaded.value = true;
+});
+
+// Load the available neighborhoods when the city is selected
+watch (cidade, async (newValue, oldValue) => {
+    const selectedCity = cities.value.find(city => city.label === newValue).value
+    await loadNeighborhoods(selectedCity);
+    neighborhoodLoaded.value = true;
+});
+
+const formatDate = (date) => {
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const year = date.getFullYear();
+
+  data_nascimento = `${day}/${month}/${year}`;
+};
+
+function formatPhoneNumber(number) {
+  let formattedNumber = '(' + number.substring(0, 2) + ') ';
+  
+  formattedNumber += number.substring(2, 7) + '-' + number.substring(7);
+  
+  return formattedNumber;
+}
+
+const checkInvalidFields = () => {
+    nomeInvalid.value = nome.value === '';
+    cpfInvalid.value = cpf_cnpj.value === '';
+    data_nascimentoInvalid.value = data_nascimento.value === '';
+    perfilInvalid.value = perfil.value === '';
+    cepInvalid.value = cep.value === '';
+    logradouroInvalid.value = logradouro.value === '';
+    numeroInvalid.value = numero.value === '';
+    cidadeInvalid.value = cidade.value === '';
+    bairroInvalid.value = bairro.value === '';
+    telefoneInvalid.value = telefone.value === '';
+    emailInvalid.value = email.value === '';
+    dia_util_inicioInvalid.value = dia_util_inicio.value === '';
+    dia_util_fimInvalid.value = dia_util_fim.value === '';
+    sabado_inicioInvalid.value = sabado_inicio.value === '';
+    sabado_fimInvalid.value = sabado_fim.value === '';
+    data_emissao_carteira_trabalhoInvalid.value = data_emissao_carteira_trabalho.value === '';
+    uf_carteira_trabalhoInvalid.value = uf_carteira_trabalho.value === '';
+    uf_identidadeInvalid.value = uf_identidade.value === '';
+    
+    // Return true if any field is invalid
+    return nomeInvalid.value || cpfInvalid.value || data_nascimentoInvalid.value || 
+            perfilInvalid.value || cepInvalid.value || logradouroInvalid.value || numeroInvalid.value || 
+            cidadeInvalid.value || bairroInvalid.value || telefoneInvalid.value || emailInvalid.value ||
+            dia_util_inicioInvalid.value || dia_util_fimInvalid.value || sabado_inicioInvalid.value || sabado_fimInvalid.value ||
+            data_emissao_carteira_trabalhoInvalid.value || uf_carteira_trabalhoInvalid.value || uf_identidadeInvalid.value;
 }
 
 // Function to map the JSON object retrieved from the API to the user data
@@ -450,113 +476,4 @@ const mapUserToJson = () => {
     })
 }
 
-const postUser = async () => {
-    if(checkInvalidFields()) return;
-
-    const userData = JSON.parse(localStorage.getItem('user_data'));
-    const authToken = userData.token;
-    const pessoa = mapUserToJson();
-
-    const response = await fetch('https://api-manager-test.infog2.com.br.infog2.com.br/a/colaborador/', {
-        method: 'POST',
-        headers: {
-            Authorization: `Token ${authToken}`,
-            'Content-Type': 'application/json',
-        },
-        body: pessoa});
-
-    if (response.status === 201) {
-        console.log('User created successfully', response.status);
-        closeModal()
-    } else {
-        throw new Error(`HTTP error status: ${response.status}`);
-    }
-
-};
-
-
-const fetchUser = async (userId) => {
-    const userData = JSON.parse(localStorage.getItem('user_data'));
-    const authToken = userData.token;
-
-    try{
-    const response = await fetch(`https://api-manager-test.infog2.com.br.infog2.com.br/a/colaborador/${userId}/`, {
-        method: 'GET',
-        headers: {
-            Authorization: `Token ${authToken}`,
-            'Content-Type': 'application/json',
-        }});
-
-        const responseData = await response.json();
-
-        await loadNeighborhoods(responseData.endereco_residencial.cidade)
-        mapJsonToUser(responseData)
-        userDataLoaded.value = true
-    } catch (error) {
-        alert('Erro ao carregar usuário')
-        closeModal()
-    }
-}
-
-
-// Checking if the modal was open by clicking in a user
-if (props.userId) {
-    userDataLoaded.value = false;
-    fetchUser(props.userId)
-}
-
-// Load the available cities when the modal is open
-onMounted( async () => {
-    await loadCities();
-    citiesLoaded.value = true;
-});
-
-// Load the available neighborhoods when the city is selected
-watch (cidade, async (newValue, oldValue) => {
-    const selectedCity = cities.value.find(city => city.label === newValue).value
-    await loadNeighborhoods(selectedCity);
-    neighborhoodLoaded.value = true;
-});
-
-const formatDate = (date) => {
-  const day = String(date.getDate()).padStart(2, '0');
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const year = date.getFullYear();
-
-  data_nascimento = `${day}/${month}/${year}`;
-};
-
-function formatPhoneNumber(number) {
-  let formattedNumber = '(' + number.substring(0, 2) + ') ';
-  
-  formattedNumber += number.substring(2, 7) + '-' + number.substring(7);
-  
-  console.log(formattedNumber)
-
-  return formattedNumber;
-}
-
-const checkInvalidFields = () => {
-    nomeInvalid.value = nome.value === '';
-    cpfInvalid.value = cpf_cnpj.value === '';
-    data_nascimentoInvalid.value = data_nascimento.value === '';
-    perfilInvalid.value = perfil.value === '';
-    cepInvalid.value = cep.value === '';
-    logradouroInvalid.value = logradouro.value === '';
-    numeroInvalid.value = numero.value === '';
-    cidadeInvalid.value = cidade.value === '';
-    bairroInvalid.value = bairro.value === '';
-    telefoneInvalid.value = telefone.value === '';
-    emailInvalid.value = email.value === '';
-    dia_util_inicioInvalid.value = dia_util_inicio.value === '';
-    dia_util_fimInvalid.value = dia_util_fim.value === '';
-    sabado_inicioInvalid.value = sabado_inicio.value === '';
-    sabado_fimInvalid.value = sabado_fim.value === '';
-    
-    // Return true if any field is invalid
-    return nomeInvalid.value || cpfInvalid.value || data_nascimentoInvalid.value || 
-            perfilInvalid.value || cepInvalid.value || logradouroInvalid.value || numeroInvalid.value || 
-            cidadeInvalid.value || bairroInvalid.value || telefoneInvalid.value || emailInvalid.value ||
-            dia_util_inicioInvalid.value || dia_util_fimInvalid.value || sabado_inicioInvalid.value || sabado_fimInvalid.value;
-}
 </script>

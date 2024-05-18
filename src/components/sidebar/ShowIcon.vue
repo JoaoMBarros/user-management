@@ -1,5 +1,7 @@
 <template>
-  <Icon />
+  <button>
+    <Icon />
+  </button>
 </template>
   
 <script setup>
