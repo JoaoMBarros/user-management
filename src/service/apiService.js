@@ -27,7 +27,6 @@ class BaseService {
             alert(stringError)
             return;
         }
-
         return response.json();
     }
 }
