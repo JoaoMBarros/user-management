@@ -1,191 +1,49 @@
 <template>
-    <div v-if="userDataLoaded" class="absolute inset-0 z-50">
+    <main v-if="userDataLoaded" class="absolute inset-0 z-50">
         <div class="w-screen h-screen backdrop-brightness-50 justify-center flex overflow-y-scroll">
             <div class="flex h-fit w-[770px] flex-col mt-[73px] bg-white rounded-xl">
-                <div class="flex w-full items-center bg-[rgb(0,145,255)] h-[50px] rounded-t-xl justify-between">
+                <section class="flex w-full items-center bg-[rgb(0,145,255)] h-[50px] rounded-t-xl justify-between">
                     <h1 class="text-white text-md ml-3">Novo usuário</h1>
                     <button class="flex mr-3" @click="closeModal"><closeIcon /></button>
-                </div>
+                </section>
 
-                <div class="flex mx-[13px] flex-col">
+                <section class="flex mx-[13px] flex-col">
 
-                    <div class="flex w-full border-b-2 mt-2">
-                        <span class="font-bold">Dados básicos</span> 
-                    </div>
+                    <BasicInfo :userData="userData" :invalidFields="invalidFields" @updateUserData="updateUserData" />
 
-                    <div class="flex flex-row mt-4 h-full w-full items-start justify-center gap-[81px]">
-                        <emptyUserPhotoIcon />
-                        <div class="flex flex-col flex-grow">
-                            <InputField :required="invalidFields.nomeInvalid" label="Nome" :value="userData.nome" @update:modelValue="userData.nome = $event"/>
-                            <InputField label="Nome da Mãe" :value="userData.nome_mae" @update:modelValue="userData.nome_mae = $event"/>
-                            <InputField label="Nome do Pai" :value="userData.nome_pai" @update:modelValue="userData.nome_pai = $event"/>
-                        </div>
-                    </div>
+                    <ComplementarInfo :userData="userData" :invalidFields="invalidFields" @updateUserData="updateUserData" />
 
-                    <div class="flex gap-2 flex-row">
-                        <!-- CPF -->
-                        <InputField :required="invalidFields.cpf_cnpjInvalid" label="CPF" class="w-[180px]" :value="userData.cpf_cnpj" @update:modelValue="userData.cpf_cnpj = $event"/>
+                    <WorkHourInfo :workHours="workHours" :invalidFields="invalidFields" @updateWorkHours="updateWorkHours" />
 
-                        <!-- Menu de dropdown pro estado civil -->
-                        <DropDownMenu :required="invalidFields.estado_civilInvalid" label="Estado Civil" class="w-[180px]" :selectedValue="userData.estado_civil" @update:modelValue="userData.estado_civil = $event">
-                            <option v-for="(status, index) in civilStatusOptions" :key="index">{{ status.label }}</option>
-                        </DropDownMenu>
+                    <DocumentInfo :userData="userData" :invalidFields="invalidFields" @updateUserData="updateUserData" />
+
+                    <AddressInfo :addressData="addressData" :cities="cities" :citiesLoaded="citiesLoaded" :neighborhoods="neighborhoods" :neighborhoodLoaded="neighborhoodLoaded" :invalidFields="invalidFields" @updateAddressData="updateAddressData" />
                     
-                        <!-- Calendario -->
-                        <div class="flex flex-col">
-                            <span class="text-sm text-[#00000080]"> Data de nascimento </span>
-                            <VueDatePicker model-value="birthdate" locale="pt-BR" class="w-[180px]" @update:model-value="formatDate">
-                                <template #trigger>
-                                    <button class="flex gap-6 items-center w-full border h-[38px] rounded-lg"><calendarIcon class="ml-1" />{{ userData.data_nascimento }}</button>
-                                    <span v-if="invalidFields.data_nascimentoInvalid" class="text-[10px] text-red-500">Campo obrigatório</span>
-                                </template>
-                            </VueDatePicker>
-                        </div>
-
-                        <!-- Apelido-->
-                        <InputField label="Apelido" class="w-[180px]" :value="userData.apelido" @update:modelValue="apelido = $event"/>
-                            
-                    </div>
-
-                    <div class="flex w-full border-b-2">
-                        <span class="font-bold">Dados complementares</span>
-                    </div>
-
-                    <div class="flex flex-col mt-4">
-                        <div class="flex flex-row gap-2">
-                            <DropDownMenu :required="invalidFields.perfilInvalid" class="w-[243px]" label="Perfil" :selectedValue="userData.perfil" @update:modelValue="userData.perfil = $event">
-                                <option v-for="(status, index) in profiles" :key="index">{{ status.label }}</option>
-                            </DropDownMenu>
-                            <InputField label="Função" class="w-[243px]" :value="userData.funcao" @update:modelValue="userData.funcao = $event" />
-                            <InputField label="Naturalidade" class="w-[243px]" :value="userData.naturalidade" @update:modelValue="userData.naturalidade = $event" />
-                        </div>
-                        <InputField label="Chave PIX" class="w-[387px]" :value="userData.pix_key" @update:modelValue="userData.pix_key = $event" />
-                    </div>
-
-                    <div class="flex w-full border-b-2">
-                        <span class="font-bold">Horário de trabalho</span>
-                    </div>
-
-                    <div class="flex flex-row mt-4 w-full justify-between mb-4">
-                        <div class="flex flex-col w-[285px] h-[96px]">
-                            <span class="text-sm font-bold mb-[17px]">
-                                Dias da semana
-                            </span>
-                            
-                            <div class="flex flex-row w-[285px] justify-between">
-                                <TimePicker label="Inicio" :time="workHours.dia_util_inicio" @update:modelValue="workHours.dia_util_inicio = $event" />
-                                <TimePicker label="Fim" :time="workHours.dia_util_fim" @update:modelValue="workHours.dia_util_fim = $event" />
-                            </div>
-                            <span v-if="invalidFields.dia_util_fimInvalid || invalidFields.dia_util_inicioInvalid" class="text-[10px] text-red-500">Campo obrigatório</span>
-                        </div>
-
-                        <div class="flex flex-col w-[285px] h-[96px]">
-                            <span class="text-sm font-bold mb-[17px]">
-                                Sábado
-                            </span>
-
-                            <div class="flex flex-row w-[285px] justify-between">
-                                <TimePicker label="Inicio" :time="workHours.sabado_inicio" @update:modelValue="workHours.sabado_inicio = $event"/>
-                                <TimePicker label="Fim" :time="workHours.sabado_fim" @update:modelValue="workHours.sabado_fim = $event" />
-                            </div>
-                            <span v-if="invalidFields.sabado_fimInvalid || invalidFields.sabado_inicioInvalid" class="text-[10px] text-red-500">Campo obrigatório</span>
-                        </div>
-                    </div>
-
-                    <div class="flex w-full border-b-2">
-                        <span class="font-bold">Documentos</span>
-                    </div>
-
-                    <div class="flex flex-col mt-4">
-                        <div class="flex flex-row justify-between">
-                            <InputField label="Número de identidade" class="w-[243px]" :value="userData.numero_identidade" @update:modelValue="userData.numero_identidade = $event" />
-                            <InputField label="Órgão emissor" class="w-[243px]" :value="userData.orgao_emissor_identidade" @update:modelValue="userData.orgao_emissor_identidade = $event" />
-                            <DropDownMenu :required="invalidFields.uf_identidadeInvalid" class="w-[243px]" label="UF identidade" :selectedValue="userData.uf_identidade" @update:modelValue="userData.uf_identidade = $event">
-                                <option v-for="(status, index) in ufStates" :key="index">{{ status.label }}</option>
-                            </DropDownMenu>
-                        </div>
-
-                        <div class="flex flex-row justify-between">
-                            <InputField label="Título de eleitor" class="w-[243px]" :value="userData.numero_titulo_eleitor" @update:modelValue="userData.numero_titulo_eleitor = $event" />
-                            <InputField label="Seção do título" class="w-[243px]" :value="userData.secao_titulo_eleitor" @update:modelValue="userData.secao_titulo_eleitor = $event" />
-                            <InputField label="Zona do título" class="w-[243px]" :value="userData.zona_titulo_eleitor" @update:modelValue="userData.zona_titulo_eleitor = $event" />
-                        </div>
-
-                        <div class="flex flex-row justify-between">
-                            <InputField label="Carteira de trabalho" class="w-[190px]" :value="userData.numero_carteira_trabalho" @update:modelValue="userData.numero_carteira_trabalho = $event" />
-                            <InputField label="Série da carteira" class="w-[190px]" :value="userData.serie_carteira_trabalho" @update:modelValue="userData.serie_carteira_trabalho = $event" />
-                            <InputField :required="invalidFields.data_emissao_carteira_trabalhoInvalid" label="Data da emissão da carteira" class="w-[190px]" :value="userData.data_emissao_carteira_trabalho" @update:modelValue="userData.data_emissao_carteira_trabalho = $event" />
-                            <DropDownMenu :required="invalidFields.uf_carteira_trabalhoInvalid" class="w-[155px]" label="UF da carteira" :selectedValue="userData.uf_carteira_trabalho" @update:modelValue="userData.uf_carteira_trabalho = $event">
-                                <option v-for="(status, index) in ufStates" :key="index">{{ status.label }}</option>
-                            </DropDownMenu>
-                        </div>
-                    </div>
-
-                    <div class="flex w-full border-b-2">
-                        <span class="font-bold">Endereço</span>
-                    </div>
-
-                    <div class="flex flex-col mt-4">
-                        <div class="flex flex-row items-center">
-                            <InputField :required="invalidFields.cepInvalid" label="CEP" class="w-[208px]" :value="addressData.cep" @update:modelValue="addressData.cep = $event" />
-                            <button class="text-blue-500 ml-1">Maps</button>
-                        </div>
-
-                        <div class="flex flex-row justify-between">
-                            <InputField :required="invalidFields.logradouroInvalid" label="Logradouro" class="w-[555px]" :value="addressData.logradouro" @update:modelValue="addressData.logradouro = $event" />
-                            <InputField :required="invalidFields.numeroInvalid" label="Número" class="w-[182px]" :value="addressData.numero" @update:modelValue="addressData.numero = $event" />
-                        </div>
-
-                        <div class="flex flex-row justify-between mb-4">
-                            <DropDownMenu class="w-[102px]" label="Estado" :selectedValue="addressData.estado" @update:modelValue="addressData.estado = $event">
-                                <option v-for="(status, index) in ufStates" :key="index">{{ status.label }}</option>
-                            </DropDownMenu>
-                            <DropDownMenu :required="invalidFields.cidadeInvalid" class="w-[317px]" label="Cidade" :selectedValue="addressData.cidade" @update:modelValue="addressData.cidade = $event">
-                                <option v-if="citiesLoaded" v-for="(status, index) in cities" :key="index">{{ status.label }}</option>
-                            </DropDownMenu>
-                            <DropDownMenu :required="invalidFields.bairroInvalid" class="w-[317px]" label="Bairro" :selectedValue="addressData.bairro" @update:modelValue="addressData.bairro = $event">
-                                <option v-if="neighborhoodLoaded" v-for="(status, index) in neighborhoods" :key="index">{{ status.label }}</option>
-                            </DropDownMenu>
-                        </div>
-
-                        <div class="flex flex-w justify-between">
-                            <InputField label="Referência" class="w-[368px]" :value="addressData.referencia" @update:modelValue="addressData.referencia = $event" />
-                            <InputField label="Complemento" class="w-[369px]" :value="addressData.complemento" @update:modelValue="addressData.complemento = $event" />
-                        </div>
-                    </div>
-
-                    <div class="flex w-full border-b-2">
-                        <span class="font-bold">Telefone</span>
-                    </div>
-
-                    <div class="flex flex-row justify-between mt-4">
-                        <InputField :required="invalidFields.telefoneInvalid" label="Telefone" class="w-[368px]" :value="userData.telefone" @update:modelValue="userData.telefone = $event" />
-                        <InputField :required="invalidFields.emailInvalid" label="Email" class="w-[368px]" :value="userData.email" @update:modelValue="userData.email = $event" />
-                    </div>
+                    <ContactInfo :userData="userData" :invalidFields="invalidFields" @updateUserData="updateUserData" />
 
                     <div class="flex flex-row justify-end gap-2">
                         <button class="bg-[#BEBEBE33] text-[#00000080] w-[115px] h-[40px] rounded-lg mt-4 hover:scale-105" @click="closeModal">Cancelar</button>
                         <button class="bg-[#007AD6] text-white w-[115px] h-[40px] rounded-lg mt-4 hover:scale-105 mb-3" @click="postUser">Salvar</button>
                     </div>
-                </div>
+                </section>
             </div>
         </div>
-    </div>
+    </main>
 </template>
 
 <script setup>
 import { ref, watch, defineEmits, onMounted, reactive } from 'vue';
-import InputField from '@/components/adduser/InputField.vue';
-import DropDownMenu from '@/components/adduser/DropDownMenu.vue';
-import TimePicker from '@/components/adduser/TimePicker.vue';
-import VueDatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
 import closeIcon from '@/assets/adduser/close-icon.svg';
-import emptyUserPhotoIcon from '@/assets/adduser/empty-user-photo-icon.svg';
-import calendarIcon from '@/assets/adduser/calendar-icon.svg';
 import { profiles } from '@/enums/profilesEnum.js';
 import { civilStatusOptions } from '@/enums/civilStatusEnum.js';
 import { ufStates } from '@/enums/ufStatesEnum.js';
+import BasicInfo from '@/components/adduser/BasicInfo.vue';
+import ComplementarInfo from '@/components/adduser/ComplementarInfo.vue';
+import WorkHourInfo from '@/components/adduser/WorkHourInfo.vue';
+import DocumentInfo from '@/components/adduser/DocumentInfo.vue';
+import AddressInfo from '@/components/adduser/AddressInfo.vue';
+import ContactInfo from '@/components/adduser/ContactInfo.vue';
 
 import { postUserService, fetchUserService, fetchNeighborhoodsService, fetchCitiesService } from '@/service/apiService.js';
 
@@ -271,6 +129,21 @@ const invalidFields = reactive({
     estado_civilInvalid: false,
 });
 
+// Function to update the user data based on the event emitted by the child component
+const updateUserData = (updatedData) => {
+    userData[updatedData.field] = updatedData.value;
+}
+
+// Function to update the work hours data
+const updateWorkHours = (updatedData) => {
+    workHours[updatedData.field] = updatedData.value;
+}
+
+// Function to update the address data
+const updateAddressData = (updatedData) => {
+    addressData[updatedData.field] = updatedData.value;
+}
+
 // Define the event of type close-modal to close the modal when clicking the x
 const emits = defineEmits(['close-modal']);
 const closeModal = () => {
@@ -305,6 +178,7 @@ const postUser = async () => {
     if(checkInvalidFields()) return;
 
     const pessoa = mapUserToJson();
+    console.log(pessoa)
     const response = await postUserService(pessoa);
 
     if (!response) return;
