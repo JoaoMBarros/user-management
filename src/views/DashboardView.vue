@@ -6,7 +6,7 @@
         </div>
 
         <div class="flex flex-wrap gap-4 justify-start w-fit h-fit mx-28 mt-32">
-            <DashboardCard @click="navigate('/config')" text="Configuração" iconName="config-icon" /> 
+            <DashboardCard text="Configuração" iconName="config-icon" /> 
             <DashboardCard @click="navigate('/users')" text="Usuários" iconName="user-avatar-icon" /> 
             <DashboardCard text="Permissões" iconName="permissions-icon" /> 
             <DashboardCard text="Motivo de cancelamento" iconName="cancel-icon" /> 

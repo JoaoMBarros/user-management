@@ -14,7 +14,7 @@ import SideBar from '@/components/sidebar/SideBar.vue';
 import TopBar from '@/components/topbar/TopBar.vue';
 import EmptyUsers from '@/components/users/EmptyUsers.vue';
 import ListUsers from '@/components/users/ListUsers.vue';
-import { onBeforeMount, onMounted, ref } from 'vue';
+import { onBeforeMount, ref } from 'vue';
 
 const users = ref([]);
 const isLoading = ref(true);

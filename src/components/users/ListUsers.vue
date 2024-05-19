@@ -4,7 +4,7 @@
             <div class="flex flex-row items-center mb-2 h-[50px]">
                 <div class="w-[419px] bg-white gap-2 flex items-center rounded-lg h-[35px]">  
                     <searchUserIcon />                  
-                    <input type="text" class="w-full h-[35px] rounded-md" placeholder="Nome e CPF" @input="updateSearchValue($event.target.value)" />
+                    <input type="text" class="w-full h-[35px] rounded-md p-1" placeholder="Nome e CPF" @input="updateSearchValue($event.target.value)" />
                 </div>
                 <button class="flex ml-2 hover:scale-105" @click="toggleModal">
                     <addUserIcon />
@@ -45,7 +45,7 @@
 import addUserIcon from '@/assets/users/add-user-button-icon.svg';
 import searchUserIcon from '@/assets/users/search-user-icon.svg';
 import AddUserView from '@/views/AddUserView.vue';
-import { ref, defineProps, computed } from 'vue';
+import { ref, computed } from 'vue';
 
 const props = defineProps({
     users: Array,

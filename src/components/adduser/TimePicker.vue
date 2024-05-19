@@ -15,7 +15,7 @@
 <script setup>
 import VueDatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css'
-import { ref, defineEmits } from 'vue';
+import { ref } from 'vue';
 import clockIcon from '@/assets/adduser/clock-icon.svg';
 
 const props = defineProps({

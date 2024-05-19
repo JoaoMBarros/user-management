@@ -9,7 +9,6 @@
   
 <script setup>
   import DynamicIcon from './ShowIcon.vue';
-  import { defineProps } from 'vue';
   
   const props = defineProps({
     iconNames: Array,

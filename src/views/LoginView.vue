@@ -11,9 +11,8 @@
 </template>
 
 <script setup>
-  import loginFooterImg from '/login-footer.png'
+  import loginFooterImg from '@/assets/login/login-footer.png'
   import AuthCard from '../components/auth/AuthCard.vue';
-  // import { login } from '../services/auth.service'; need to create
   import router from '@/router';
   
   // Login
@@ -26,30 +25,32 @@
         return;
       }
 
-      const response = await fetch('https://api-manager-test.infog2.com.br.infog2.com.br/a/auth/login_colaborador/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          username: email,
-          password: password,
-        }),
-      });
+      try {
+        const response = await fetch('https://api-manager-test.infog2.com.br.infog2.com.br/a/auth/login_colaborador/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            username: email,
+            password: password,
+          }),
+        });
 
-      // Parse the response body as JSON
-      const data = await response.json();
+        const data = await response.json();
 
-      if (response.ok) {
-        // Set user data to local storage
-        localStorage.setItem('user_data', JSON.stringify(data));
+        if (response.ok) {
+          localStorage.setItem('user_data', JSON.stringify(data));
 
-        // Redirect to the dashboard
-        router.push('/');
-      } else {
-        // Error in the request
-        console.error(data);
-        alert(data.error)
+          // Redirect to the dashboard
+          router.push('/');
+        } else {
+          console.error(data);
+          alert(data.error)
+        }
+      } catch (error) {
+        console.error(error);
+        alert('Erro ao realizar login');
       }
   }
 </script>

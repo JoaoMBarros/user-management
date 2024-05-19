@@ -1,15 +1,7 @@
-import router from "@/router";
-
-const userData = JSON.parse(localStorage.getItem('user_data'));
-const authToken = userData.token;
-
-if (!authToken) {
-    router.push({ name: 'login' });
-}
-
 class BaseService {
-    constructor(authToken) {
-        this.authToken = authToken;
+    constructor(userData) {
+        this.userData = userData;
+        this.authToken = userData.token;
     }
 
     async fetch(url, options = {}) {
@@ -31,9 +23,11 @@ class BaseService {
     }
 }
 
-const userService = new BaseService(authToken);
 
 const postUserService = async (pessoa) => {
+    const userData = JSON.parse(localStorage.getItem('user_data'));
+    const userService = new BaseService(userData);
+
     return await userService.fetch('https://api-manager-test.infog2.com.br.infog2.com.br/a/colaborador/', {
         method: 'POST',
         body: pessoa,
@@ -41,14 +35,20 @@ const postUserService = async (pessoa) => {
 };
 
 const fetchUserService = async (userId) => {
+    const userData = JSON.parse(localStorage.getItem('user_data'));
+    const userService = new BaseService(userData);
     return await userService.fetch(`https://api-manager-test.infog2.com.br.infog2.com.br/a/colaborador/${userId}/`);
 };
 
 const fetchCitiesService = async () => {
+    const userData = JSON.parse(localStorage.getItem('user_data'));
+    const userService = new BaseService(userData);
     return await userService.fetch('https://api-manager-test.infog2.com.br.infog2.com.br/a/cidade/?text=');
 };
 
 const fetchNeighborhoodsService = async (cityId) => {
+    const userData = JSON.parse(localStorage.getItem('user_data'));
+    const userService = new BaseService(userData);
     return await userService.fetch(`https://api-manager-test.infog2.com.br.infog2.com.br/a/bairro/?cidade_id=${cityId}`);
 };
 

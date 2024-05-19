@@ -3,7 +3,7 @@
         <div class="w-screen h-screen backdrop-brightness-50 justify-center flex overflow-y-scroll">
             <div class="flex h-fit w-[770px] flex-col mt-[73px] bg-white rounded-xl">
                 <section class="flex w-full items-center bg-[rgb(0,145,255)] h-[50px] rounded-t-xl justify-between">
-                    <h1 class="text-white text-md ml-3">Novo usuário</h1>
+                    <h1 class="text-white text-md ml-3 font-bold">Novo usuário</h1>
                     <button class="flex mr-3" @click="closeModal"><closeIcon /></button>
                 </section>
 
@@ -32,7 +32,7 @@
 </template>
 
 <script setup>
-import { ref, watch, defineEmits, onMounted, reactive } from 'vue';
+import { ref, watch, onMounted, reactive } from 'vue';
 import '@vuepic/vue-datepicker/dist/main.css';
 import closeIcon from '@/assets/adduser/close-icon.svg';
 import { profiles } from '@/enums/profilesEnum.js';
@@ -183,6 +183,7 @@ const postUser = async () => {
 
     if (!response) return;
 
+    alert('Usuário cadastrado com sucesso');
     closeModal();
 };
 

@@ -8,7 +8,7 @@
 
   
 <script setup>
-import { ref, defineProps, watchEffect, watch } from 'vue';
+import { ref, watchEffect, watch } from 'vue';
 
 const props = defineProps({
   label: String,

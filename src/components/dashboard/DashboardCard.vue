@@ -10,7 +10,7 @@
 </template>
 
 <script setup>
-    import { defineProps, defineAsyncComponent } from 'vue';
+    import { defineAsyncComponent } from 'vue';
 
     const props = defineProps({
         text: String,

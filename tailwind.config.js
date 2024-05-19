@@ -4,7 +4,7 @@ export default {
   theme: {
     extend: {
       backgroundImage: {
-        'masked-login-bg': "linear-gradient(to right bottom, rgba(34, 150, 246, 0.8), rgba(0, 229, 253, 0.8)), url('public/login-bg.png')",
+        'masked-login-bg': "linear-gradient(to right bottom, rgba(34, 150, 246, 0.8), rgba(0, 229, 253, 0.8)), url('@/assets/login/login-bg.png')",
       },
       fontFamily: {
         sans: ['Mulish', 'sans-serif'],
