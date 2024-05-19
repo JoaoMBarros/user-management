@@ -219,14 +219,6 @@ watch (() => addressData.cidade, async (newValue, oldValue) => {
     }
 });
 
-const formatDate = (date) => {
-  const day = String(date.getDate()).padStart(2, '0');
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const year = date.getFullYear();
-
-  userData.data_nascimento = `${day}/${month}/${year}`;
-};
-
 function formatPhoneNumber(number) {
   let formattedNumber = '(' + number.substring(0, 2) + ') ';
   

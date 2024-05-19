@@ -4,7 +4,7 @@
             <div class="flex flex-row items-center mb-2 h-[50px]">
                 <div class="w-[419px] bg-white gap-2 flex items-center rounded-lg h-[35px]">  
                     <searchUserIcon />                  
-                    <input type="text" class="w-full h-[35px] rounded-md" placeholder="Nome e CPF" />
+                    <input type="text" class="w-full h-[35px] rounded-md" placeholder="Nome e CPF" @input="updateSearchValue($event.target.value)" />
                 </div>
                 <button class="flex ml-2 hover:scale-105" @click="toggleModal">
                     <addUserIcon />
@@ -12,8 +12,8 @@
             </div>
 
             <ul class="flex flex-col gap-4">
-                <li v-for="(user, index) in users" :key="index" class="rounded-lg shadow-lg bg-white hover:cursor-pointer hover:scale-105 overflow-hidden" @click="toggleModal(user)">
-                    <div class="flex w-full mx-16 max-w-full items-center justify-between h-[85px]">
+                <li v-for="(user, index) in filteredUsers" :key="index" class="rounded-lg shadow-lg bg-white hover:cursor-pointer hover:scale-105 overflow-hidden" @click="toggleModal(user)">
+                    <div v-if="checkUser(user)" class="flex w-full mx-16 max-w-full items-center justify-between h-[85px]">
                         <!-- Nome e Cargo -->
                         <div class="flex-col items-start w-[120px]"> 
                             <p class="text-sm font-bold overflow-hidden whitespace-nowrap text-ellipsis">{{ user.nome }}</p>
@@ -45,7 +45,7 @@
 import addUserIcon from '@/assets/users/add-user-button-icon.svg';
 import searchUserIcon from '@/assets/users/search-user-icon.svg';
 import AddUserView from '@/views/AddUserView.vue';
-import { ref, defineProps } from 'vue';
+import { ref, defineProps, computed } from 'vue';
 
 const props = defineProps({
     users: Array,
@@ -54,6 +54,20 @@ const props = defineProps({
 const showModal = ref(false);
 
 const user_id = ref('')
+
+const searchInput = ref('');
+
+const updateSearchValue = (value) => {
+    searchInput.value = value;
+};
+
+const checkUser = (user) => {
+    return user.nome.toLowerCase().includes(searchInput.value.toLowerCase()) || user.cpf_cnpj_formatado.includes(searchInput.value) || searchInput.value === '';
+};
+
+const filteredUsers = computed(() => {
+    return props.users.filter(checkUser);
+});
 
 const toggleModal = (user) => {
     if (user){
