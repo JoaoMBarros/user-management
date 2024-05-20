@@ -1,29 +1,37 @@
-# user-management
+# Aplicação de Gerenciamento de Usuários
 
-This template should help get you started developing with Vue 3 in Vite.
+Este é um projeto de aplicação de gerenciamento de usuários desenvolvido utilizando Vue.js, Vite e Tailwind CSS.
 
-## Recommended IDE Setup
+## Como Rodar
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+Para executar a aplicação localmente, siga os passos abaixo:
 
-## Customize configuration
+1. Clone este repositório para sua máquina local:
 
-See [Vite Configuration Reference](https://vitejs.dev/config/).
+   ```
+   git clone https://github.com/JoaoMBarros/user-management.git
+   ```
 
-## Project Setup
+2. Navegue até o diretório do projeto:
 
-```sh
-npm install
-```
+   ```
+   cd user-management
+   ```
 
-### Compile and Hot-Reload for Development
+3. Execute o seguinte comando para iniciar os containers Docker:
 
-```sh
-npm run dev
-```
+   ```
+   docker-compose -f docker-compose up
+   ```
 
-### Compile and Minify for Production
+4. A aplicação estará disponível em [http://localhost:8080](http://localhost:8080).
 
-```sh
-npm run build
-```
+## Requisitos
+
+Certifique-se de ter o Docker instalado em sua máquina para executar este projeto.
+
+## Tecnologias Utilizadas
+
+- [Vue.js](https://vuejs.org/)
+- [Vite](https://vitejs.dev/)
+- [Tailwind CSS](https://tailwindcss.com/)
