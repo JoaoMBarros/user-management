@@ -35,3 +35,7 @@ Certifique-se de ter o Docker instalado em sua máquina para executar este proje
 - [Vue.js](https://vuejs.org/)
 - [Vite](https://vitejs.dev/)
 - [Tailwind CSS](https://tailwindcss.com/)
+
+
+
+https://github.com/JoaoMBarros/user-management/assets/86634674/636b8678-eb26-4f06-b374-22e2e0295403
